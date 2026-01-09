@@ -1,5 +1,5 @@
 # Web-scraper
-a CLI web scapper app in python
+a CLI web scraper app in python
 
 # Rationality
 This app is beign made with the express intent of learning how to better use python to interact
