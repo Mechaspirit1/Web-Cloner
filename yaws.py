@@ -3,13 +3,13 @@ from bs4 import BeautifulSoup
 import requests
 
 def website_cloning(param):
-    create_html = open("clone_file.html", "w")
+    create_html = open("clone_file.html", "w", encoding="utf8") 
     create_html.write(param.prettify())
 
 #funcão que retorna conteudo de uma tag HTML como texto e a disponibiliza como um arquivo txt
 def fetch_tag_contents(tags, param):
     tag_type = param.find_all(tags)
-    create_txt = open("tag_contents.txt", "w")
+    create_txt = open("tag_contents.txt", "w", encoding="utf-8")
     file_txt = ""
 
     #Loop que printa o texto da tag HTML e o adiciona a variavel file_txt
@@ -20,7 +20,7 @@ def fetch_tag_contents(tags, param):
                 file_txt += (href.get("href").replace("#", "") + "\n")
     else:
         for text in tag_type:
-            print(text.get_text(strip=True))
+            print("\n", text.get_text(strip=True))
             file_txt += (text.get_text(strip=True)+ "\n")
 
     file_option = input("Do you wish to write this to a file ? (y/n): ").lower()
@@ -29,9 +29,19 @@ def fetch_tag_contents(tags, param):
         print("File created ! \n")
     elif file_option == 'n':
         return
+    
+def option_handling():
+    break_point = input("Do you wish to exit the program ? (y/n): ").lower()
+    if break_point == "y":
+        return False
+    elif break_point == "n":
+        return True
+    else:
+        print("Invalid Command !")
+        return False
 
 #-----------------------------------------------------------------------------------------
-#todo - clean up this entire section
+#todo - virar homem e implementar argparse
 banner = r"""
 __   __ ___        ______
 \ \ / // \ \      / / ___|
@@ -39,14 +49,12 @@ __   __ ___        ______
   | |/ ___ \ V  V /  ___) |
   |_/_/   \_\_/\_/  |____/
 """
-
 print(banner)
 print("Yet Another Web-Scraper")
 print("\033]8;;https://github.com/Mechaspirit1\033\\A tool by Pablo Loschi (Mechaspirit1)\033]8;;\033\\")
 
 while True:
     try:
-
         print("1-Scrape raw HTML | 2-Search by HTML tag")
         mode_select = int(input("-> "))
 
@@ -54,6 +62,7 @@ while True:
         headers = {"User-Agent": "Mozilla/5.0"}
 
         response = requests.get(f"{url_input}", headers=headers)
+        response.raise_for_status() #evita a continuação do programa caso a pagina retorne um erro
         res_parsed = response.content
         soup = BeautifulSoup(res_parsed, 'html.parser')
 
@@ -67,34 +76,18 @@ while True:
                 print("Operation halted \n")
             else:
                 print("Invalid command !")
-
-            break_point = input("Do you wish to exit the program ? (y/n): ").lower()
-            if break_point == "y":
-                break
-            elif break_point == "n":
-                continue
-            else:
-                print("Invalid Command !")
+                
+            if not option_handling():
                 break
 
         elif mode_select == 2:
             tag_input = input("Fetch specific HTML tag: ")
             fetch_tag_contents(tag_input, soup)
-
-            break_point = input("Do you wish to exit the program ? (y/n): ").lower()
-            if break_point == "y":
+            if not option_handling():
                 break
-            elif break_point == "n":
-                continue
-            else:
-                print("Invalid Command !")
-                break
-        else:
-            print("Invalid command !")
-            continue
-
+        
     except requests.RequestException:
-        print("Error !")
+        print("\nNetwork or input error, try again...")
         continue
     except KeyboardInterrupt:
         print("\nProgram interrupted, exiting...")
