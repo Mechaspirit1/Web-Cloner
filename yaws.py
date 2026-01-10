@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 from bs4 import BeautifulSoup
 import requests
+import re #regular expressions
 
 def website_cloning(param):
     create_html = open("clone_file.html", "w", encoding="utf8") 
@@ -14,10 +15,12 @@ def fetch_tag_contents(tags, param):
 
     #Loop que printa o texto da tag HTML e o adiciona a variavel file_txt
     if tags == "a":
+        #Só busca por links que contenham https://
+        tag_type = param.find_all(tags, attrs={'href': re.compile("^https://")})
         for href in tag_type:
             if href.get("href") != None:
-                print(href.get("href").replace("#", ""))
-                file_txt += (href.get("href").replace("#", "") + "\n")
+                print(href.get("href"))
+                file_txt += (href.get("href") + "\n")
     else:
         for text in tag_type:
             print("\n", text.get_text(strip=True))
@@ -37,7 +40,7 @@ def option_handling():
     elif break_point == "n":
         return True
     else:
-        print("Invalid Command !")
+        print("Invalid Command ! \n")
         return False
 
 #-----------------------------------------------------------------------------------------
@@ -63,7 +66,7 @@ while True:
 
         response = requests.get(f"{url_input}", headers=headers)
         response.raise_for_status() #evita a continuação do programa caso a pagina retorne um erro
-        res_parsed = response.content
+        res_parsed = response.content 
         soup = BeautifulSoup(res_parsed, 'html.parser')
 
         if mode_select == 1:
@@ -75,7 +78,7 @@ while True:
             elif option == "n":
                 print("Operation halted \n")
             else:
-                print("Invalid command !")
+                print("Invalid command ! \n")
                 
             if not option_handling():
                 break
