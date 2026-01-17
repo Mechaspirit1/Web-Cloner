@@ -15,6 +15,7 @@ the app will be divided into a couple of different modes:
 * Arguments - a list of arguments will be displayed if the app is run with the --help command
 
 # Instalation
+* Install dependencies - ```pip install requests bs4```
 * Clone this repository and open directory
 * Make script executable ```chmod +x yaws.py```
 * Copy or move it to a $PATH directory (```cp yaws.py /usr/your/directory```) or (```mv yaws.py /usr/your/directory```)
